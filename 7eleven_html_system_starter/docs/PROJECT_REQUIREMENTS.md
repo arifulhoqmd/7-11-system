@@ -45,7 +45,6 @@ Focus on:
 - official/current product name;
 - reading;
 - Romaji;
-- Bengali meaning;
 - important sound/keyword;
 - quantity;
 - visual clue;

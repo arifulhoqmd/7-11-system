@@ -239,7 +239,7 @@ Mobile-first, especially Android.
 Requirements:
 
 - large touch targets;
-- readable Japanese, Romaji, and Bengali;
+- readable Japanese, English, and Romaji;
 - minimal typing;
 - responsive layout;
 - fast quiz flow;

@@ -1,14 +1,14 @@
 # Project Plan — Pre-Coding Baseline
 
-Status: **Planning / data preparation. No HTML implementation approved yet.**
+Status: **Phase 3A number and dynamic-price listening complete. Awaiting approval for further Phase 3 modes.**
 
 ## Phase 0 — Repository and data safety
 
-- [ ] Place this repository under Git.
-- [ ] Keep the v2 master JSON unchanged as the baseline.
-- [ ] Confirm Codex reads `AGENTS.md`.
-- [ ] Confirm the project opens/runs locally from VS Code.
-- [ ] Create a Git checkpoint before implementation.
+- [x] Place this repository under Git.
+- [x] Keep the v2 master JSON unchanged as the baseline.
+- [x] Confirm Codex reads `AGENTS.md`.
+- [x] Confirm the project opens/runs locally from VS Code.
+- [x] Create a Git checkpoint before implementation.
 
 Exit condition: baseline files are protected and Codex understands the project rules.
 
@@ -16,33 +16,33 @@ Exit condition: baseline files are protected and Codex understands the project r
 
 ### 1A. V1 language scope
 
-- [ ] Use existing Japanese, Kana, Romaji, and English fields.
+- [x] Use existing Japanese, Kana, Romaji, and English fields.
 - [ ] Support Japanese -> English.
 - [ ] Support English -> Japanese.
 - [ ] Support Japanese -> Romaji.
 - [ ] Support listening -> meaning/action.
-- [ ] Do not add Bengali fields in V1.
-- [ ] Keep the architecture ready for Bengali as future work.
+- [x] Do not add Bengali fields in V1.
+- [x] Keep the architecture ready for Bengali as future work.
 
 ### 1B. Beginner pool
 
-- [ ] Implement selection logic, not a duplicate dataset.
-- [ ] Broad eligible rule: priority 1 + beginner.
-- [ ] Starter Stage A: numbers 0-20 + key counters + priority-1 beginner register/hot-food/extra.
-- [ ] Define per-session sample size and weighting.
-- [ ] Ensure later content remains unlockable.
+- [x] Implement selection logic, not a duplicate dataset.
+- [x] Broad eligible rule: priority 1 + beginner.
+- [x] Starter Stage A: numbers 0-20 + key counters + priority-1 beginner register/hot-food/extra.
+- [x] Define per-session sample size and weighting.
+- [x] Ensure later content remains unlockable.
 
 Exit condition: data layer is ready for the first quiz UI.
 
 ## Phase 2 — Application shell
 
-- [ ] Create mobile-first HTML/CSS/JS structure.
-- [ ] Load the master JSON.
-- [ ] Validate dataset load and show a friendly error if unavailable.
-- [ ] Add simple navigation/home screen.
-- [ ] Add practice-mode selection.
-- [ ] Add Japanese TTS helper using `speechSynthesis`.
-- [ ] Add localStorage progress module.
+- [x] Create mobile-first HTML/CSS/JS structure.
+- [x] Load the master JSON.
+- [x] Validate dataset load and show a friendly error if unavailable.
+- [x] Add simple navigation/home screen.
+- [x] Add practice-mode selection.
+- [x] Add Japanese TTS helper using `speechSynthesis`.
+- [x] Add localStorage progress module.
 
 Exit condition: app loads on desktop and Android browser and can read data.
 
@@ -50,8 +50,8 @@ Exit condition: app loads on desktop and Android browser and can read data.
 
 Implement in this order:
 
-1. [ ] Number listening
-2. [ ] Dynamic price/円 listening
+1. [x] Number listening
+2. [x] Dynamic price/円 listening
 3. [ ] Hot-food name listening
 4. [ ] Hot-food + quantity
 5. [ ] Customer phrase -> action
