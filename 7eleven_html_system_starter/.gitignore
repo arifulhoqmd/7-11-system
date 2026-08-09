@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# VS Code local settings (keep project settings only if intentionally added)
+.vscode/*.log
+
+# Temporary/generated files
+tmp/
+temp/
+*.tmp
+
+# Future dependency/build folders
+node_modules/
+dist/
+
+# Local learner progress exports
+progress/
+*.progress.json
