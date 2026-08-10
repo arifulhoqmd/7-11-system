@@ -1,4 +1,9 @@
-# First Codex Prompt
+# ARCHIVED — INITIAL PROJECT SETUP PROMPT
+
+> This file is historical documentation only. It is not the current Codex instruction.
+> Read `docs/CURRENT_CODEX_DIRECTION.md` for the active approved direction.
+
+## Original initial setup prompt
 
 Paste this into the Codex panel in VS Code after opening this project folder.
 

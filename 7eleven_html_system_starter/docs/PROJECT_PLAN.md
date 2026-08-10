@@ -1,6 +1,8 @@
-# Project Plan — Pre-Coding Baseline
+# Project Plan — Active V1 Direction
 
-Status: **Phase 3B dedicated Number Training module complete. Awaiting approval before hot-food or customer-interaction work.**
+Status: **Phase 3B Dedicated Number Training is complete.**
+
+Next stage: **Phase 3C — Number Training Refinement and Validation. This is not hot-food development.**
 
 ## Phase 0 — Repository and data safety
 
@@ -21,8 +23,7 @@ Exit condition: baseline files are protected and Codex understands the project r
 - [ ] Support English -> Japanese.
 - [ ] Support Japanese -> Romaji.
 - [ ] Support listening -> meaning/action.
-- [x] Do not add Bengali fields in V1.
-- [x] Keep the architecture ready for Bengali as future work.
+- [x] Keep the current language scope to Japanese <-> English, with Romaji where useful.
 
 ### 1B. Beginner pool
 
@@ -59,6 +60,8 @@ Implement in this order:
 7. [ ] Cigarette shelf number
 8. [ ] Mistake review
 
+Items 3–8 are paused while Phase 3C refines and validates Number Training. Hot-food and customer-interaction work must not resume until the number module is satisfactory and a later phase is approved.
+
 Exit condition: all priority V1 modes work and persist learner results.
 
 ### Phase 3B — Dedicated Number Training
@@ -79,6 +82,20 @@ Exit condition: all priority V1 modes work and persist learner results.
 
 The tobacco practice ranges are configurable training ranges, not a claim that 300 is a universal shelf maximum.
 
+### Phase 3C — Number Training Refinement and Validation
+
+- [ ] Validate the Listening versus Speaking / Reading structure.
+- [ ] Simplify pure-number display.
+- [ ] Remove unnecessary vocabulary-style information from number screens.
+- [ ] Confirm range selection.
+- [ ] Improve number progress reporting.
+- [ ] Validate Android usability.
+- [ ] Validate TTS pronunciation.
+- [ ] Test realistic tobacco + quantity exercises.
+- [ ] Prepare bill, price, and change speaking practice.
+
+Exit condition: the dedicated number module is satisfactory, validated on Android, and ready for explicit approval of the next development phase.
+
 ## Phase 4 — Mixed practice
 
 - [ ] Mixed realistic checkout mode
@@ -92,7 +109,7 @@ Exit condition: learner can complete a short realistic mixed session.
 ## Phase 5 — Validation and Android usability
 
 - [ ] Test Japanese characters.
-- [ ] Keep Unicode handling compatible with future Bengali support.
+- [ ] Test Unicode handling throughout the application.
 - [ ] Test Romaji.
 - [ ] Test touch targets on Android.
 - [ ] Test portrait layout.
