@@ -15,5 +15,5 @@ node_modules/
 dist/
 
 # Local learner progress exports
-progress/
+/progress/
 *.progress.json

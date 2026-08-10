@@ -1,4 +1,10 @@
 import { getCurrentQuestion } from "../quiz/session-engine.js";
+import {
+  renderNumberResults,
+  renderNumberSetup,
+  renderNumberTask,
+  renderNumberTrainingHome,
+} from "./number-training-screens.js";
 
 export const PRACTICE_MODES = Object.freeze([
   {
@@ -177,9 +183,13 @@ function renderPractice(state) {
         <button
           class="secondary-button"
           type="button"
-          data-action="start-quiz"
+          data-action="${selectedMode.id === "numbers" ? "open-number-training" : "start-quiz"}"
         >
-          Start ${state.settings.sessionSize}-question session
+          ${
+            selectedMode.id === "numbers"
+              ? "Open Number Training"
+              : `Start ${state.settings.sessionSize}-question session`
+          }
         </button>
       </section>
     `
@@ -585,7 +595,15 @@ export function renderApp(
   }
 
   let screen;
-  if (state.route === "quiz") {
+  if (state.route === "number-training") {
+    screen = renderNumberTrainingHome(state);
+  } else if (state.route === "number-setup") {
+    screen = renderNumberSetup(state);
+  } else if (state.route === "number-task") {
+    screen = renderNumberTask(state, { ttsSupported });
+  } else if (state.route === "number-results") {
+    screen = renderNumberResults(state);
+  } else if (state.route === "quiz") {
     screen = renderQuiz(state, { ttsSupported });
   } else if (state.route === "results") {
     screen = renderResults(state);

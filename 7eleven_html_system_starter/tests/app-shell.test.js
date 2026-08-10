@@ -72,7 +72,7 @@ test("number and price selections can start while later modes stay unavailable",
   });
 
   assert.match(output, /Numbers selected/);
-  assert.match(output, /Start 10-question session/);
+  assert.match(output, /Open Number Training/);
 
   const laterOutput = renderApp(
     { ...readyState("practice"), selectedMode: "hot-food" },

@@ -42,6 +42,12 @@ test("progress defaults are versioned and separate from content", () => {
   assert.deepEqual(progress.items, {});
   assert.deepEqual(progress.exercises, {});
   assert.deepEqual(progress.mistakes, {});
+  assert.deepEqual(progress.numberTraining, {
+    skills: {},
+    modes: {},
+    ranges: {},
+    taskKinds: {},
+  });
   assert.deepEqual(progress.sessions, []);
   assert.ok(Object.isFrozen(progress));
   assert.ok(Object.isFrozen(progress.settings));
@@ -292,4 +298,44 @@ test("completed session summaries are stored separately from questions", () => {
   assert.equal(summary.patternId, "QZ005");
   assert.equal(summary.correct, 8);
   assert.equal(Object.hasOwn(summary, "questions"), false);
+});
+
+test("number-training results update skill, mode, range, and task-kind stats", () => {
+  const store = createProgressStore({
+    storage: createMemoryStorage(),
+    datasetMetadata: DATASET_METADATA,
+  });
+
+  store.recordAnswer({
+    exerciseKey: "NT_TOBACCO:tobacco-101-200:128",
+    patternId: "NT_TOBACCO",
+    sourceRefs: ["NUM000128", "RULE_BAN"],
+    correct: false,
+    answeredAt: "2026-08-10T04:00:00.000Z",
+    numberTraining: {
+      skill: "listening",
+      modeId: "tobacco-number",
+      rangeId: "tobacco-101-200",
+      taskKind: "tobacco-number",
+    },
+  });
+
+  const progress = store.getSnapshot();
+  for (const stats of [
+    progress.numberTraining.skills.listening,
+    progress.numberTraining.modes["tobacco-number"],
+    progress.numberTraining.ranges["tobacco-101-200"],
+    progress.numberTraining.taskKinds["tobacco-number"],
+  ]) {
+    assert.deepEqual(stats, {
+      attempts: 1,
+      correct: 0,
+      incorrect: 1,
+      lastSeenAt: "2026-08-10T04:00:00.000Z",
+    });
+  }
+  assert.equal(
+    progress.mistakes["NT_TOBACCO:tobacco-101-200:128"].status,
+    "active",
+  );
 });

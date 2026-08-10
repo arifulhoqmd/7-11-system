@@ -2,6 +2,16 @@ import { createJapaneseTts } from "./audio/japanese-tts.js";
 import { loadMasterDataset } from "./data/load-master.js";
 import { selectStageA, selectStageB } from "./data/selectors.js";
 import { createProgressStore } from "./progress/progress-store.js";
+import { getNumberTrainingMode } from "./number-training/number-training-config.js";
+import { generateNumberTrainingTasks } from "./number-training/number-task-generator.js";
+import {
+  advanceNumberTask,
+  createSelfMarkSession,
+  getCurrentNumberTask,
+  getNumberSessionSummary,
+  markNumberTask,
+  revealNumberTask,
+} from "./number-training/self-mark-session.js";
 import { generateListeningQuestions } from "./quiz/number-question-generator.js";
 import {
   advanceSession,
@@ -24,6 +34,8 @@ let progressStore = null;
 let previousRoute = null;
 let previousQuestionId = null;
 let previousQuestionAnswered = false;
+let previousNumberTaskId = null;
+let previousNumberPhase = null;
 
 function currentStageCount(state) {
   if (state.status !== "ready") {
@@ -54,6 +66,17 @@ function render(state) {
     state.route === "quiz" &&
     state.quizSession?.currentResult !== null &&
     !previousQuestionAnswered;
+  const currentNumberTask =
+    state.status === "ready" && state.route === "number-task"
+      ? getCurrentNumberTask(state.numberSession)
+      : null;
+  const numberTaskChanged =
+    currentNumberTask !== null &&
+    currentNumberTask.taskId !== previousNumberTaskId;
+  const numberAnswerJustRevealed =
+    state.route === "number-task" &&
+    state.numberSession?.phase === "revealed" &&
+    previousNumberPhase === "prompt";
 
   root.innerHTML = renderApp(state, {
     stageCount: currentStageCount(state),
@@ -67,11 +90,18 @@ function render(state) {
     root.querySelector("#main-content")?.focus({ preventScroll: true });
   } else if (answerJustRevealed) {
     root.querySelector(".feedback-card")?.focus({ preventScroll: true });
+  } else if (numberTaskChanged) {
+    root.querySelector("#main-content")?.focus({ preventScroll: true });
+  } else if (numberAnswerJustRevealed) {
+    root.querySelector(".number-answer-card")?.focus({ preventScroll: true });
   }
   previousRoute = state.route;
   previousQuestionId = currentQuestion?.questionId ?? null;
   previousQuestionAnswered =
     state.route === "quiz" && state.quizSession?.currentResult !== null;
+  previousNumberTaskId = currentNumberTask?.taskId ?? null;
+  previousNumberPhase =
+    state.route === "number-task" ? state.numberSession?.phase : null;
 }
 
 appState.subscribe(render);
@@ -169,6 +199,42 @@ function startSelectedQuiz() {
   }
 }
 
+function startNumberSession() {
+  const state = appState.getState();
+  const mode = getNumberTrainingMode(state.numberModeId);
+  if (!mode || !state.numberRangeId) {
+    appState.setState({
+      announcement: "Choose a number range first.",
+    });
+    return;
+  }
+
+  try {
+    const tasks = generateNumberTrainingTasks({
+      dataset: state.dataset,
+      modeId: mode.id,
+      rangeId: state.numberRangeId,
+      sessionSize: state.settings.sessionSize,
+    });
+    const numberSession = createSelfMarkSession({
+      tasks,
+      modeId: mode.id,
+      rangeId: state.numberRangeId,
+    });
+    japaneseTts.stop();
+    appState.setState({
+      route: "number-task",
+      numberSession,
+      announcement: null,
+    });
+  } catch (error) {
+    appState.setState({
+      route: "number-setup",
+      announcement: `Could not start: ${error.message}`,
+    });
+  }
+}
+
 root.addEventListener("click", (event) => {
   const control = event.target.closest("[data-action]");
   if (!(control instanceof HTMLElement)) {
@@ -197,7 +263,147 @@ root.addEventListener("click", (event) => {
       (candidate) => candidate.id === control.dataset.mode,
     );
     if (mode) {
-      appState.setState({ selectedMode: mode.id });
+      appState.setState({
+        selectedMode: mode.id,
+        numberModeId:
+          mode.id === "numbers" ? appState.getState().numberModeId : null,
+      });
+    }
+    return;
+  }
+
+  if (action === "open-number-training") {
+    appState.setState({
+      route: "number-training",
+      numberModeId: null,
+      numberRangeId: null,
+      numberSession: null,
+      announcement: null,
+    });
+    return;
+  }
+
+  if (action === "choose-number-mode") {
+    const mode = getNumberTrainingMode(control.dataset.numberMode);
+    if (!mode) {
+      return;
+    }
+    if (mode.id === "number-multiple-choice") {
+      appState.setState({
+        selectedMode: "numbers",
+        numberModeId: mode.id,
+      });
+      startSelectedQuiz();
+      return;
+    }
+    appState.setState({
+      route: "number-setup",
+      numberModeId: mode.id,
+      numberRangeId: null,
+      numberSession: null,
+      announcement: null,
+    });
+    return;
+  }
+
+  if (action === "select-number-range") {
+    appState.setState({
+      numberRangeId: control.dataset.rangeId,
+      announcement: null,
+    });
+    return;
+  }
+
+  if (action === "start-number-session" || action === "restart-number-session") {
+    startNumberSession();
+    return;
+  }
+
+  if (action === "exit-number-session") {
+    japaneseTts.stop();
+    appState.setState({
+      route: "number-training",
+      numberSession: null,
+      announcement: null,
+    });
+    return;
+  }
+
+  if (action === "finish-number-results") {
+    japaneseTts.stop();
+    appState.setState({
+      route: "number-training",
+      numberSession: null,
+      announcement: null,
+    });
+    return;
+  }
+
+  if (action === "play-number-task") {
+    const state = appState.getState();
+    const task = getCurrentNumberTask(state.numberSession);
+    const result = japaneseTts.speakRecord(
+      { tts_text: task.ttsText },
+      { rate: state.settings.ttsRate },
+    );
+    appState.setState({
+      announcement: result.ok
+        ? "Playing Japanese audio."
+        : "Japanese speech synthesis is unavailable.",
+    });
+    return;
+  }
+
+  if (action === "reveal-number-answer") {
+    const state = appState.getState();
+    const task = getCurrentNumberTask(state.numberSession);
+    const numberSession = revealNumberTask(state.numberSession);
+    let announcement = null;
+    if (task.promptType === "speaking") {
+      const result = japaneseTts.speakRecord(
+        { tts_text: task.ttsText },
+        { rate: state.settings.ttsRate },
+      );
+      announcement = result.ok
+        ? "Playing the correct Japanese reading."
+        : "Answer revealed; Japanese speech synthesis is unavailable.";
+    }
+    appState.setState({ numberSession, announcement });
+    return;
+  }
+
+  if (action === "mark-number-task") {
+    const state = appState.getState();
+    const numberSession = markNumberTask(
+      state.numberSession,
+      control.dataset.correct === "true",
+    );
+    progressStore.recordAnswer(numberSession.currentResult);
+    appState.setState({
+      numberSession,
+      announcement:
+        progressStore.getLastError() === null
+          ? null
+          : "Result recorded in memory; browser storage is unavailable.",
+    });
+    return;
+  }
+
+  if (action === "next-number-task") {
+    const state = appState.getState();
+    const numberSession = advanceNumberTask(state.numberSession);
+    japaneseTts.stop();
+    if (numberSession.status === "completed") {
+      progressStore.recordSessionSummary(
+        getNumberSessionSummary(numberSession),
+      );
+      appState.setState({
+        route: "number-results",
+        numberSession,
+        announcement: null,
+      });
+    } else {
+      appState.setState({ numberSession, announcement: null });
     }
     return;
   }
@@ -209,8 +415,10 @@ root.addEventListener("click", (event) => {
 
   if (action === "exit-quiz" || action === "finish-results") {
     japaneseTts.stop();
+    const returnToNumberTraining =
+      appState.getState().numberModeId === "number-multiple-choice";
     appState.setState({
-      route: "practice",
+      route: returnToNumberTraining ? "number-training" : "practice",
       quizSession: null,
       announcement: null,
     });
@@ -241,7 +449,21 @@ root.addEventListener("click", (event) => {
       state.quizSession,
       control.dataset.choiceKey,
     );
-    progressStore.recordAnswer(quizSession.currentResult);
+    progressStore.recordAnswer({
+      ...quizSession.currentResult,
+      numberTraining: {
+        skill: "listening",
+        modeId:
+          quizSession.patternId === "QZ005"
+            ? "number-multiple-choice"
+            : "price-listening",
+        rangeId: `stage-${quizSession.stage.toLowerCase()}`,
+        taskKind:
+          quizSession.patternId === "QZ005"
+            ? "plain-number"
+            : "service-amount",
+      },
+    });
     japaneseTts.stop();
     appState.setState({
       quizSession,

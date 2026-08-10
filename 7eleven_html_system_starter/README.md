@@ -1,6 +1,6 @@
 # 7-Eleven HTML Training System
 
-This repository contains the verified data layer, the mobile-first application shell, and the Phase 3A number/price listening quizzes. Hot-food and customer-interaction quizzes are not implemented yet.
+This repository contains the verified data layer, the mobile-first application shell, and the Phase 3B dedicated Number Training module. Hot-food and customer-interaction quizzes are not implemented yet.
 
 ## Included
 
@@ -13,6 +13,7 @@ This repository contains the verified data layer, the mobile-first application s
 - `src/data/` — validation, normalization, joins, selectors, and counter composition
 - `src/audio/` — browser-native Japanese TTS
 - `src/quiz/` — QZ005/QZ006 question generation and session state
+- `src/number-training/` — runtime number readings, ranges, composed tasks, and self-marking sessions
 - `src/progress/` — versioned localStorage progress/settings
 - `src/state/` and `src/ui/` — navigation, state, and Phase 2 screens
 - `tests/` — automated data and application-shell tests
@@ -64,8 +65,11 @@ npm test
 
 - QZ005 — number listening from the selected Stage A or Stage B cardinal pool;
 - QZ006 — price listening composed at runtime from the same cardinal records plus the 円 rule.
+- number dictation with selectable ranges through 300;
+- tobacco number, quantity, tobacco + quantity, selected money, and mixed listening;
+- number speaking/reading with selectable ranges through 1000.
 
-Both modes use four numeric choices, save results to localStorage, and reveal Japanese/Kana/Romaji only after answering when audio is available.
+Generated values use reusable Japanese number rules and explicit irregular readings. Generated practice objects remain runtime-only. Results and number range performance stay in localStorage.
 
 ## Important
 

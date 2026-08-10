@@ -4,6 +4,10 @@ export const APP_ROUTES = Object.freeze([
   "settings",
   "quiz",
   "results",
+  "number-training",
+  "number-setup",
+  "number-task",
+  "number-results",
 ]);
 export const APP_STATUSES = Object.freeze(["loading", "ready", "error"]);
 
@@ -15,6 +19,9 @@ export function createAppState(initialState = {}) {
     settings: null,
     selectedMode: null,
     quizSession: null,
+    numberModeId: null,
+    numberRangeId: null,
+    numberSession: null,
     error: null,
     ...initialState,
   });

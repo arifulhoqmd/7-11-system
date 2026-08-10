@@ -1,6 +1,6 @@
 # Project Plan — Pre-Coding Baseline
 
-Status: **Phase 3A number and dynamic-price listening complete. Awaiting approval for further Phase 3 modes.**
+Status: **Phase 3B dedicated Number Training module complete. Awaiting approval before hot-food or customer-interaction work.**
 
 ## Phase 0 — Repository and data safety
 
@@ -60,6 +60,24 @@ Implement in this order:
 8. [ ] Mistake review
 
 Exit condition: all priority V1 modes work and persist learner results.
+
+### Phase 3B — Dedicated Number Training
+
+- [x] Number Training home with Listening and Speaking / Reading sections
+- [x] Number Dictation with paper/self-mark flow
+- [x] Configurable listening ranges through 300
+- [x] Existing QZ005 multiple-choice access
+- [x] Tobacco number + 番 listening
+- [x] Explicit つ / 個 quantity listening
+- [x] Tobacco number + quantity composition
+- [x] Selected service/money amounts
+- [x] Mixed number listening
+- [x] Number Reading ranges through 1000
+- [x] Reusable runtime Japanese number-reading engine
+- [x] Explicit irregular hundreds/thousands
+- [x] Number skill/mode/range progress and mistake tracking
+
+The tobacco practice ranges are configurable training ranges, not a claim that 300 is a universal shelf maximum.
 
 ## Phase 4 — Mixed practice
 

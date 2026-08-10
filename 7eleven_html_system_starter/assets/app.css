@@ -730,6 +730,234 @@ h3 {
   margin-top: 10px;
 }
 
+.back-button {
+  width: auto;
+  margin: -6px 0 18px -8px;
+}
+
+.number-section {
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.section-title-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.section-title-row h2,
+.section-title-row p {
+  margin-bottom: 2px;
+}
+
+.section-title-row p {
+  color: var(--ink-700);
+  font-size: 0.88rem;
+}
+
+.section-number {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+  color: #ffffff;
+  background: var(--green-700);
+  font-weight: 900;
+}
+
+.section-number.orange {
+  background: var(--orange-600);
+}
+
+.number-mode-list {
+  display: grid;
+  gap: 10px;
+}
+
+.number-mode-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  width: 100%;
+  min-height: 76px;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-medium);
+  color: var(--ink-900);
+  text-align: left;
+  background: var(--background);
+}
+
+.number-mode-card strong,
+.number-mode-card small {
+  display: block;
+}
+
+.number-mode-card small {
+  grid-column: 1;
+  color: var(--ink-700);
+}
+
+.number-mode-card .mode-arrow {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.priority-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  color: #9a3f09;
+  background: var(--orange-100);
+  font-size: 0.67rem;
+  font-weight: 850;
+}
+
+.future-category {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px dashed #b9c4bd;
+  border-radius: var(--radius-medium);
+  color: var(--ink-700);
+  background: var(--background);
+}
+
+.future-category span {
+  font-size: 0.72rem;
+}
+
+.range-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.range-button {
+  min-height: 54px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--ink-700);
+  background: var(--background);
+  font-weight: 800;
+}
+
+.range-button[aria-pressed="true"] {
+  border-color: var(--green-700);
+  color: var(--green-900);
+  background: var(--green-100);
+}
+
+.number-task-card {
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  text-align: center;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.task-instruction {
+  color: var(--ink-700);
+  font-weight: 750;
+}
+
+.hidden-answer-mark {
+  display: grid;
+  width: 112px;
+  height: 112px;
+  margin: 12px auto 20px;
+  place-items: center;
+  border: 3px dashed var(--line);
+  border-radius: 28px;
+  color: var(--ink-500);
+  background: var(--background);
+  font-size: 3rem;
+  font-weight: 900;
+}
+
+.speaking-number {
+  margin: 20px 0 28px;
+  font-size: clamp(3.2rem, 20vw, 6rem);
+  font-weight: 950;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.show-answer-button {
+  margin-top: 12px;
+}
+
+.number-answer-card {
+  padding: 8px 0 2px;
+}
+
+.numeric-answer {
+  margin-bottom: 12px;
+  color: var(--green-900);
+  font-size: clamp(2.6rem, 16vw, 4.8rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.self-mark-panel,
+.self-mark-feedback {
+  margin-top: 15px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+}
+
+.self-mark-panel h2 {
+  text-align: center;
+}
+
+.self-mark-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.self-mark-button {
+  min-height: 62px;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.self-mark-button.correct {
+  color: var(--green-900);
+  background: var(--green-100);
+}
+
+.self-mark-button.wrong {
+  color: #8f2721;
+  background: #ffebe9;
+}
+
+.self-mark-feedback.correct {
+  border-color: var(--green-700);
+  background: var(--green-100);
+}
+
+.self-mark-feedback.wrong {
+  border-color: var(--red-600);
+  background: #fff5f4;
+}
+
 .bottom-nav {
   position: fixed;
   z-index: 10;
@@ -838,6 +1066,10 @@ h3 {
   .audio-row {
     grid-template-columns: 1fr auto;
     align-items: center;
+  }
+
+  .range-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
