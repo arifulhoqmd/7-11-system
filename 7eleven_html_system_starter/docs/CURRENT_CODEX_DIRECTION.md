@@ -4,9 +4,8 @@ This document is the active approved direction for continued development. It sup
 
 ## Current status and next phase
 
-- Phase 3B Dedicated Number Training is complete.
-- The next stage is **Phase 3C — Number Training Refinement and Validation**.
-- Phase 3C is not hot-food or customer-interaction development.
+- Phase 3C Number Training Refinement and Validation is complete.
+- No further development phase is currently approved.
 - Hot-food and customer-interaction quiz work remains paused until Number Training is satisfactory and a later phase is explicitly approved.
 
 ## Language scope
@@ -73,9 +72,9 @@ Start with general number reading, then prepare category practice for:
 
 Master the 1–1,000 range before progressing toward 10,000. Preserve useful selectable ranges such as 1–10, 1–20, 1–50, 1–100, 101–200, 201–300, 301–500, 501–1,000, and custom ranges within the validated limit. Later progression may add 1,001–1,500 and subsequent ranges toward 10,000 after the earlier ranges are satisfactory.
 
-## Phase 3C work
+## Completed Phase 3C work
 
-Phase 3C should:
+Phase 3C:
 
 - validate the Listening versus Speaking / Reading structure;
 - simplify pure-number display;

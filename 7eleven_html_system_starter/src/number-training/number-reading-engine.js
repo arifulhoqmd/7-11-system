@@ -143,3 +143,17 @@ export function resolveNumberReading(dataset, value) {
     sourceRef: stored.number_id,
   });
 }
+
+export function createPureNumberRuntime(dataset, value) {
+  const reading = resolveNumberReading(dataset, value);
+  const compactRomaji = reading.romaji.replace(
+    /\b(ichi|ni|san|yon|go|roku|nana|hachi|kyuu) (juu|hyaku|sen|man)\b/g,
+    "$1$2",
+  );
+  return Object.freeze({
+    value,
+    readingKana: reading.readingKana,
+    romaji: compactRomaji,
+    ttsText: reading.ttsText,
+  });
+}

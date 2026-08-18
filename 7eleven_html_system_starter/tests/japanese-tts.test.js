@@ -107,3 +107,21 @@ test("TTS rejects records without Japanese tts_text", () => {
     /record with tts_text/,
   );
 });
+
+test("TTS exposes completion and error callbacks for timer lifecycle", () => {
+  const synth = createFakeSynthesis();
+  const tts = createJapaneseTts({
+    speechSynthesis: synth,
+    Utterance: FakeUtterance,
+  });
+  let ended = 0;
+  let failed = 0;
+  tts.speakRecord({ tts_text: "さん" }, {
+    onEnd: () => { ended += 1; },
+    onError: () => { failed += 1; },
+  });
+  synth.spoken[0].onend();
+  synth.spoken[0].onerror();
+  assert.equal(ended, 1);
+  assert.equal(failed, 1);
+});

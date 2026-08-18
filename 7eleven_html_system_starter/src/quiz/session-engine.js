@@ -88,6 +88,30 @@ export function submitAnswer(
   });
 }
 
+export function submitTimeout(
+  session,
+  { now = () => new Date().toISOString() } = {},
+) {
+  if (session.status !== "active" || session.currentResult !== null) {
+    throw new Error("Only an unanswered active question can time out.");
+  }
+  const question = getCurrentQuestion(session);
+  const response = {
+    exerciseKey: question.exerciseKey,
+    patternId: question.patternId,
+    sourceRefs: [...question.sourceRefs],
+    choiceKey: null,
+    correct: false,
+    timedOut: true,
+    answeredAt: now(),
+  };
+  return deepFreeze({
+    ...session,
+    currentResult: response,
+    responses: [...session.responses, response],
+  });
+}
+
 export function advanceSession(
   session,
   { now = () => new Date().toISOString() } = {},

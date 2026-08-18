@@ -1,9 +1,13 @@
 import { getCurrentQuestion } from "../quiz/session-engine.js";
+import { getAnswerTimeRemaining } from "../number-training/answer-deadline.js";
 import {
   renderNumberResults,
   renderNumberSetup,
   renderNumberTask,
   renderNumberTrainingHome,
+  renderContinuousPlaying,
+  renderContinuousReading,
+  renderSpecialNumberPage,
 } from "./number-training-screens.js";
 
 export const PRACTICE_MODES = Object.freeze([
@@ -101,122 +105,134 @@ function renderError(error) {
   `;
 }
 
-function renderHome(state, stageCount) {
-  const { settings, dataset } = state;
+function renderHome() {
   return `
-    <main class="screen" id="main-content" tabindex="-1">
-      <header class="screen-heading">
-        <p class="eyebrow">7-Eleven work support</p>
-        <h1>Ready for a short practice?</h1>
-        <p class="lede">Hear → understand → act correctly → respond simply.</p>
-      </header>
-
-      <section class="card hero-card" aria-labelledby="today-plan">
-        <h2 id="today-plan">Current learning plan</h2>
-        <p class="muted">Your choices are saved only in this browser.</p>
-        <div class="plan-stats">
-          <div class="stat">
-            <strong>Stage ${escapeHtml(settings.stage)}</strong>
-            <span>${stageCount} available records</span>
-          </div>
-          <div class="stat">
-            <strong>${settings.sessionSize}</strong>
-            <span>questions per session</span>
-          </div>
-        </div>
+    <main
+      class="screen home-screen"
+      id="main-content"
+      tabindex="-1"
+      aria-label="Choose training type"
+    >
+      <section class="home-category-grid" aria-label="Number training categories">
         <button
-          class="primary-button"
+          class="home-category-card listening"
+          type="button"
+          data-action="choose-number-mode"
+          data-number-mode="number-dictation"
+        >
+          <span class="home-category-icon" aria-hidden="true">▶</span>
+          <span class="home-category-copy">
+            <strong>Listening</strong>
+            <small>Hear and write numbers</small>
+          </span>
+          <span class="home-category-arrow" aria-hidden="true">›</span>
+        </button>
+        <button
+          class="home-category-card reading"
+          type="button"
+          data-action="choose-number-mode"
+          data-number-mode="number-reading"
+        >
+          <span class="home-category-icon" aria-hidden="true">あ</span>
+          <span class="home-category-copy">
+            <strong>Speaking / Reading</strong>
+            <small>See and say numbers</small>
+          </span>
+          <span class="home-category-arrow" aria-hidden="true">›</span>
+        </button>
+        <button
+          class="home-category-card special"
           type="button"
           data-action="navigate"
-          data-route="practice"
+          data-route="special-number"
         >
-          Choose practice mode
+          <span class="home-category-icon" aria-hidden="true">特</span>
+          <span class="home-category-copy">
+            <strong>Special Number</strong>
+            <small>Memorize irregular pronunciations</small>
+          </span>
+          <span class="home-category-arrow" aria-hidden="true">›</span>
         </button>
-      </section>
-
-      <section class="card tip-card" aria-label="Dataset status">
-        <div class="tip-icon" aria-hidden="true">✓</div>
-        <div>
-          <h2>Training data is ready</h2>
-          <p class="muted">
-            ${dataset.masterItems.length} source records loaded. Only your
-            selected beginner stage is shown for practice.
-          </p>
-        </div>
       </section>
     </main>
   `;
 }
 
 function renderPractice(state) {
-  const selectedMode = PRACTICE_MODES.find(
-    (mode) => mode.id === state.selectedMode,
-  );
-  const modeButtons = PRACTICE_MODES.map(
-    (mode) => `
+  const laterModules = [
+    {
+      icon: "食",
+      title: "Hot Food",
+      description: "Paused while Number Training is the priority",
+    },
+    {
+      icon: "客",
+      title: "Customer Interaction",
+      description: "Requests and staff responses are paused",
+    },
+    {
+      icon: "組",
+      title: "Mixed Practice",
+      description: "Planned for a later development phase",
+    },
+    {
+      icon: "復",
+      title: "Mistake Review",
+      description: "Dedicated review screen planned for later",
+    },
+  ];
+
+  return `
+    <main class="screen practice-hub" id="main-content" tabindex="-1">
+      <header class="screen-heading">
+        <p class="eyebrow">Practice</p>
+        <h1>Current training</h1>
+        <p class="lede">
+          Listening-first number practice for work.
+        </p>
+      </header>
+
       <button
-        class="mode-card"
+        class="active-training-card"
         type="button"
-        data-action="select-mode"
-        data-mode="${mode.id}"
-        aria-pressed="${mode.id === state.selectedMode}"
+        data-action="open-number-training"
       >
-        <span class="mode-icon" aria-hidden="true">${mode.icon}</span>
-        <span class="mode-copy">
-          <strong>${escapeHtml(mode.title)}</strong>
-          <small>${escapeHtml(mode.description)}</small>
-          <span class="mode-status">
-            ${mode.patternId ? "Ready" : "Later phase"}
+        <span class="active-module-icon" aria-hidden="true">123</span>
+        <span class="active-module-copy">
+          <small>Primary active module</small>
+          <strong>Number Training</strong>
+          <span>Listening · Speaking / Reading</span>
+          <span class="active-module-settings">
+            Stage ${escapeHtml(state.settings.stage)} · ${state.settings.sessionSize} tasks
           </span>
         </span>
         <span class="mode-arrow" aria-hidden="true">›</span>
       </button>
-    `,
-  ).join("");
 
-  const selection = selectedMode
-    ? selectedMode.patternId
-      ? `
-      <section class="selection-summary" aria-live="polite">
-        <h2>${escapeHtml(selectedMode.title)} selected</h2>
-        <p>${escapeHtml(selectedMode.description)}.</p>
-        <button
-          class="secondary-button"
-          type="button"
-          data-action="${selectedMode.id === "numbers" ? "open-number-training" : "start-quiz"}"
-        >
-          ${
-            selectedMode.id === "numbers"
-              ? "Open Number Training"
-              : `Start ${state.settings.sessionSize}-question session`
-          }
-        </button>
-      </section>
-    `
-      : `
-        <section class="selection-summary" aria-live="polite">
-          <h2>${escapeHtml(selectedMode.title)}</h2>
-          <div class="phase-note">
-            This mode is intentionally not implemented in Phase 3A.
+      <section class="later-modules" aria-labelledby="later-modules-title">
+        <div class="later-modules-heading">
+          <div>
+            <p class="eyebrow">Not active</p>
+            <h2 id="later-modules-title">Later modules</h2>
           </div>
-        </section>
-      `
-    : "";
-
-  return `
-    <main class="screen" id="main-content" tabindex="-1">
-      <header class="screen-heading">
-        <p class="eyebrow">Practice</p>
-        <h1>Choose a focus</h1>
-        <p class="lede">
-          Stage ${escapeHtml(state.settings.stage)} ·
-          ${state.settings.sessionSize} questions
-        </p>
-      </header>
-      <div class="mode-grid" aria-label="Practice modes">
-        ${modeButtons}
-      </div>
-      ${selection}
+          <span>Paused</span>
+        </div>
+        <div class="later-module-grid">
+          ${laterModules
+            .map(
+              (module) => `
+                <button class="later-module-card" type="button" disabled>
+                  <span aria-hidden="true">${module.icon}</span>
+                  <span>
+                    <strong>${escapeHtml(module.title)}</strong>
+                    <small>${escapeHtml(module.description)}</small>
+                  </span>
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+      </section>
     </main>
   `;
 }
@@ -265,6 +281,25 @@ function renderSettings(state, { ttsSupported, sampleRecord }) {
     setting: "ttsRate",
     formatter: (rate) =>
       rate === 0.75 ? "Slow" : rate === 0.9 ? "Learning" : "Normal",
+  });
+  const environmentButtons = renderChoiceButtons({
+    values: ["clean", "light", "medium", "conversation"],
+    currentValue: settings.listeningEnvironment,
+    setting: "listeningEnvironment",
+    formatter: (level) =>
+      level === "clean"
+        ? "Clean"
+        : level === "light"
+          ? "Light noise"
+          : level === "medium"
+            ? "Medium noise"
+            : "Background conversation",
+  });
+  const answerLimitButtons = renderChoiceButtons({
+    values: [1, 2, 3, 5, 7],
+    currentValue: settings.answerTimeLimitSeconds,
+    setting: "answerTimeLimitSeconds",
+    formatter: (seconds) => `${seconds} second${seconds === 1 ? "" : "s"}`,
   });
 
   return `
@@ -366,6 +401,26 @@ function renderSettings(state, { ttsSupported, sampleRecord }) {
             ${escapeHtml(state.announcement ?? "")}
           </p>
         </section>
+
+        <section class="setting-group" aria-labelledby="environment-setting">
+          <h2 id="environment-setting">Listening environment</h2>
+          <p>Optional ambient sound plays only while a listening prompt is speaking.</p>
+          <div class="choice-grid" role="group" aria-label="Listening environment">
+            ${environmentButtons}
+          </div>
+          <p class="muted">Clean is the default. Background conversation is synthetic, indistinct speech-like babble with no understandable words. Japanese speech stays clearly louder.</p>
+        </section>
+
+        <section class="setting-group" aria-labelledby="answer-limit-setting">
+          <h2 id="answer-limit-setting">Answer time limit</h2>
+          <p>
+            Applies to Listening and Speaking / Reading. An expired question
+            is automatically marked wrong.
+          </p>
+          <div class="choice-grid" role="group" aria-label="Answer time limit">
+            ${answerLimitButtons}
+          </div>
+        </section>
       </div>
     </main>
   `;
@@ -376,14 +431,31 @@ function renderQuiz(state, { ttsSupported }) {
   const question = getCurrentQuestion(session);
   const result = session.currentResult;
   const answered = result !== null;
+  const acceptingAnswers =
+    !answered &&
+    (!ttsSupported || Number.isFinite(state.answerDeadline?.startedAt));
   const position = session.currentIndex + 1;
   const total = session.questions.length;
   const progressPercent = Math.round((position / total) * 100);
+  const answerTimeRemaining =
+    state.answerDeadline?.startedAt === null || !state.answerDeadline
+      ? null
+      : getAnswerTimeRemaining(state.answerDeadline, Date.now());
+  const answerTimeText =
+    answerTimeRemaining === null
+      ? ttsSupported
+        ? "Starts after audio"
+        : "Waiting"
+      : `${(answerTimeRemaining / 1000).toFixed(1)} sec`;
 
   const choices = question.choices
     .map((choice) => {
       let answerClass = "";
-      if (answered && choice.key === question.correctChoiceKey) {
+      if (
+        answered &&
+        !result.timedOut &&
+        choice.key === question.correctChoiceKey
+      ) {
         answerClass = " correct";
       } else if (
         answered &&
@@ -399,7 +471,7 @@ function renderQuiz(state, { ttsSupported }) {
           type="button"
           data-action="answer-question"
           data-choice-key="${escapeHtml(choice.key)}"
-          ${answered ? "disabled" : ""}
+          ${acceptingAnswers ? "" : "disabled"}
         >
           ${escapeHtml(choice.label)}
         </button>
@@ -407,7 +479,25 @@ function renderQuiz(state, { ttsSupported }) {
     })
     .join("");
 
-  const feedback = answered
+  const feedback = answered && result.timedOut
+    ? `
+      <section
+        class="feedback-card is-incorrect"
+        aria-live="polite"
+        tabindex="-1"
+      >
+        <p class="feedback-label">Time is up — marked wrong</p>
+        <p class="muted">The answer stays hidden. Try it again in a later session.</p>
+        <button
+          class="primary-action-button"
+          type="button"
+          data-action="next-question"
+        >
+          ${position === total ? "See results" : "Next question"}
+        </button>
+      </section>
+    `
+    : answered
     ? `
       <section
         class="feedback-card ${result.correct ? "is-correct" : "is-incorrect"}"
@@ -415,7 +505,7 @@ function renderQuiz(state, { ttsSupported }) {
         tabindex="-1"
       >
         <p class="feedback-label">
-          ${result.correct ? "Correct" : "Not quite"}
+          ${result.timedOut ? "Time is up — marked wrong" : result.correct ? "Correct" : "Not quite"}
         </p>
         <p class="answer-japanese" lang="ja">
           ${escapeHtml(question.reveal.japanese)}
@@ -446,12 +536,13 @@ function renderQuiz(state, { ttsSupported }) {
     <main class="quiz-screen" id="main-content" tabindex="-1">
       <header class="quiz-header">
         <button
-          class="text-button"
+          class="text-button exit-session-button"
           type="button"
           data-action="exit-quiz"
           aria-label="Exit this quiz session"
         >
-          Exit
+          <span class="navigation-button-icon" aria-hidden="true">×</span>
+          <span>Exit</span>
         </button>
         <div class="quiz-position">
           <strong>Question ${position} of ${total}</strong>
@@ -498,6 +589,11 @@ function renderQuiz(state, { ttsSupported }) {
                 ${escapeHtml(question.reveal.readingKana)}
               </p>
             `
+        }
+        ${
+          answered
+            ? ""
+            : `<div class="answer-deadline">Time left: <strong class="answer-time-left">${answerTimeText}</strong></div>`
         }
         <p class="announcement" aria-live="polite">
           ${escapeHtml(state.announcement ?? "")}
@@ -557,7 +653,6 @@ function renderResults(state) {
 function renderBottomNavigation(route) {
   const items = [
     ["home", "⌂", "Home"],
-    ["practice", "▶", "Practice"],
     ["settings", "⚙", "Settings"],
   ];
 
@@ -585,7 +680,12 @@ function renderBottomNavigation(route) {
 
 export function renderApp(
   state,
-  { stageCount = 0, ttsSupported = false, sampleRecord = {} } = {},
+  {
+    stageCount = 0,
+    ttsSupported = false,
+    englishTtsSupported = false,
+    sampleRecord = {},
+  } = {},
 ) {
   if (state.status === "loading") {
     return renderLoading();
@@ -603,6 +703,15 @@ export function renderApp(
     screen = renderNumberTask(state, { ttsSupported });
   } else if (state.route === "number-results") {
     screen = renderNumberResults(state);
+  } else if (state.route === "continuous-playing") {
+    screen = renderContinuousPlaying(state, {
+      ttsSupported,
+      englishTtsSupported,
+    });
+  } else if (state.route === "continuous-reading") {
+    screen = renderContinuousReading(state, { ttsSupported });
+  } else if (state.route === "special-number") {
+    screen = renderSpecialNumberPage(state, { ttsSupported });
   } else if (state.route === "quiz") {
     screen = renderQuiz(state, { ttsSupported });
   } else if (state.route === "results") {
@@ -612,11 +721,11 @@ export function renderApp(
   } else if (state.route === "settings") {
     screen = renderSettings(state, { ttsSupported, sampleRecord });
   } else {
-    screen = renderHome(state, stageCount);
+    screen = renderHome();
   }
 
   return `
-    <div class="app-frame">
+    <div class="app-frame ${["number-training", "number-setup", "continuous-playing", "continuous-reading", "special-number"].includes(state.route) ? "number-training-frame" : ""}">
       ${screen}
       ${
         ["home", "practice", "settings"].includes(state.route)

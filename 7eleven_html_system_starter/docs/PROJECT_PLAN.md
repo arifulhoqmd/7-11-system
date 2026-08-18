@@ -1,8 +1,8 @@
 # Project Plan — Active V1 Direction
 
-Status: **Phase 3B Dedicated Number Training is complete.**
+Status: **Phase 3C Number Training Refinement and Validation is complete. Awaiting approval before further feature development.**
 
-Next stage: **Phase 3C — Number Training Refinement and Validation. This is not hot-food development.**
+Next stage: **No further development phase is approved. Hot-food and customer-interaction development remains paused.**
 
 ## Phase 0 — Repository and data safety
 
@@ -60,7 +60,7 @@ Implement in this order:
 7. [ ] Cigarette shelf number
 8. [ ] Mistake review
 
-Items 3–8 are paused while Phase 3C refines and validates Number Training. Hot-food and customer-interaction work must not resume until the number module is satisfactory and a later phase is approved.
+Items 3–8 remain paused after Phase 3C. Hot-food and customer-interaction work must not resume until the number module is satisfactory and a later phase is approved.
 
 Exit condition: all priority V1 modes work and persist learner results.
 
@@ -84,15 +84,15 @@ The tobacco practice ranges are configurable training ranges, not a claim that 3
 
 ### Phase 3C — Number Training Refinement and Validation
 
-- [ ] Validate the Listening versus Speaking / Reading structure.
-- [ ] Simplify pure-number display.
-- [ ] Remove unnecessary vocabulary-style information from number screens.
-- [ ] Confirm range selection.
-- [ ] Improve number progress reporting.
-- [ ] Validate Android usability.
-- [ ] Validate TTS pronunciation.
-- [ ] Test realistic tobacco + quantity exercises.
-- [ ] Prepare bill, price, and change speaking practice.
+- [x] Validate the Listening versus Speaking / Reading structure.
+- [x] Simplify pure-number display.
+- [x] Remove unnecessary vocabulary-style information from number screens.
+- [x] Confirm range selection.
+- [x] Improve number progress reporting.
+- [x] Validate Android usability.
+- [x] Validate TTS pronunciation.
+- [x] Test realistic tobacco + quantity exercises.
+- [x] Prepare bill, price, and change speaking practice.
 
 Exit condition: the dedicated number module is satisfactory, validated on Android, and ready for explicit approval of the next development phase.
 

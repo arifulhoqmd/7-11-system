@@ -12,6 +12,7 @@ import {
   getCurrentQuestion,
   getSessionSummary,
   submitAnswer,
+  submitTimeout,
 } from "../src/quiz/session-engine.js";
 import { readRawDataset } from "./helpers.js";
 
@@ -67,4 +68,30 @@ test("quiz session tracks progress and produces a final result", async () => {
     incorrect: 1,
     exerciseKeys: questions.map((question) => question.exerciseKey),
   });
+});
+
+test("multiple-choice timeout records an unanswered question as wrong", async () => {
+  const data = normalizeMasterDataset(await readRawDataset());
+  const questions = generateListeningQuestions({
+    dataset: data,
+    patternId: NUMBER_LISTENING_PATTERN_ID,
+    stage: "A",
+    sessionSize: 1,
+    rng: () => 0.4,
+  });
+  let session = createQuizSession({
+    questions,
+    modeId: "numbers",
+    patternId: NUMBER_LISTENING_PATTERN_ID,
+    stage: "A",
+    idFactory: () => "timeout-quiz",
+  });
+  session = submitTimeout(session, {
+    now: () => "2026-08-11T03:00:03.000Z",
+  });
+  assert.equal(session.currentResult.choiceKey, null);
+  assert.equal(session.currentResult.correct, false);
+  assert.equal(session.currentResult.timedOut, true);
+  assert.equal(session.correctCount, 0);
+  assert.throws(() => submitTimeout(session), /unanswered active question/);
 });

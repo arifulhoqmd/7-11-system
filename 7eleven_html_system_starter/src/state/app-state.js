@@ -8,6 +8,9 @@ export const APP_ROUTES = Object.freeze([
   "number-setup",
   "number-task",
   "number-results",
+  "continuous-playing",
+  "continuous-reading",
+  "special-number",
 ]);
 export const APP_STATUSES = Object.freeze(["loading", "ready", "error"]);
 
@@ -17,11 +20,19 @@ export function createAppState(initialState = {}) {
     route: "home",
     dataset: null,
     settings: null,
+    progress: null,
     selectedMode: null,
     quizSession: null,
     numberModeId: null,
     numberRangeId: null,
     numberSession: null,
+    listeningAttempt: null,
+    listeningElapsedMs: null,
+    answerDeadline: null,
+    continuousSession: null,
+    continuousRemainingMs: null,
+    continuousReadingSession: null,
+    continuousReadingRemainingMs: null,
     error: null,
     ...initialState,
   });

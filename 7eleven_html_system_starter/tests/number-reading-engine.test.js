@@ -8,6 +8,7 @@ import {
   TOBACCO_RANGES,
 } from "../src/number-training/number-training-config.js";
 import {
+  createPureNumberRuntime,
   generateJapaneseNumber,
   resolveNumberReading,
 } from "../src/number-training/number-reading-engine.js";
@@ -67,6 +68,30 @@ test("stored readings are preferred while absent values use runtime rules", asyn
   assert.equal(generated.ttsText, "ろっぴゃくはちじゅうよん");
 });
 
+test("pure-number runtime objects contain only number-training essentials", async () => {
+  const data = normalizeMasterDataset(await readRawDataset());
+  const number = createPureNumberRuntime(data, 234);
+
+  assert.deepEqual(number, {
+    value: 234,
+    readingKana: "にひゃくさんじゅうよん",
+    romaji: "nihyaku sanjuu yon",
+    ttsText: "にひゃくさんじゅうよん",
+  });
+  for (const unnecessaryField of [
+    "english",
+    "explanation",
+    "picture",
+    "expectedAction",
+    "listenKeywords",
+    "notes",
+    "product",
+  ]) {
+    assert.equal(Object.hasOwn(number, unnecessaryField), false);
+  }
+  assert.ok(Object.isFrozen(number));
+});
+
 test("generated rules agree with every stored cardinal through 10,000", async () => {
   const raw = await readRawDataset();
   const storedCardinals = raw.number_detail.filter(
@@ -103,6 +128,7 @@ test("every selectable range has valid inclusive boundaries", () => {
       [51, 100],
       [101, 200],
       [201, 300],
+      [1, 300],
     ],
   );
   assert.deepEqual(
@@ -119,6 +145,10 @@ test("every selectable range has valid inclusive boundaries", () => {
       [701, 800],
       [801, 900],
       [901, 1000],
+      [1001, 10000],
+      [400, 5999],
+      [1, 1000],
+      [1, 10000],
     ],
   );
 });

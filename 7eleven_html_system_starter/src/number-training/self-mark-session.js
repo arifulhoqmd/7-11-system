@@ -16,6 +16,8 @@ function defaultIdFactory() {
   return `number-session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+export const MAX_TIMEOUT_RETRIES = 5;
+
 export function createSelfMarkSession({
   tasks,
   modeId,
@@ -33,6 +35,7 @@ export function createSelfMarkSession({
     status: "active",
     phase: "prompt",
     currentIndex: 0,
+    currentRetryCount: 0,
     currentResult: null,
     correctCount: 0,
     startedAt: now(),
@@ -58,7 +61,12 @@ export function revealNumberTask(session) {
 export function markNumberTask(
   session,
   correct,
-  { now = () => new Date().toISOString() } = {},
+  {
+    now = () => new Date().toISOString(),
+    responseTimeMs = null,
+    replayCount = 0,
+    timedOut = false,
+  } = {},
 ) {
   if (session.status !== "active" || session.phase !== "revealed") {
     throw new Error("Reveal the answer before self-marking.");
@@ -74,12 +82,31 @@ export function markNumberTask(
     sourceRefs: [...task.sourceRefs],
     correct,
     answeredAt: now(),
+    responseTimeMs:
+      task.promptType === "listening" &&
+      Number.isFinite(responseTimeMs) &&
+      responseTimeMs >= 0
+        ? Math.round(responseTimeMs)
+        : null,
+    replayCount:
+      task.promptType === "listening" &&
+      Number.isInteger(replayCount) &&
+      replayCount >= 0
+        ? replayCount
+        : 0,
+    timedOut: Boolean(timedOut),
     numberTraining: {
       skill:
         task.promptType === "speaking" ? "speaking-reading" : "listening",
       modeId: session.modeId,
       rangeId: session.rangeId,
       taskKind: task.taskKind,
+      ...(typeof task.coverageKey === "string"
+        ? {
+            coverageKey: task.coverageKey,
+            coverageCycle: task.coverageCycle,
+          }
+        : {}),
     },
   };
 
@@ -111,6 +138,26 @@ export function advanceNumberTask(
   return deepFreeze({
     ...session,
     currentIndex: session.currentIndex + 1,
+    currentRetryCount: 0,
+    phase: "prompt",
+    currentResult: null,
+  });
+}
+
+export function retryTimedOutNumberTask(session) {
+  if (
+    session.status !== "active" ||
+    session.phase !== "marked" ||
+    session.currentResult?.timedOut !== true
+  ) {
+    throw new Error("Only a timed-out current task can be retried.");
+  }
+  if ((session.currentRetryCount ?? 0) >= MAX_TIMEOUT_RETRIES) {
+    throw new Error("All retries for this task have already been used.");
+  }
+  return deepFreeze({
+    ...session,
+    currentRetryCount: (session.currentRetryCount ?? 0) + 1,
     phase: "prompt",
     currentResult: null,
   });

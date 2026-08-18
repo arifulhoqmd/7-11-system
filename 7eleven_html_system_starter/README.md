@@ -10,6 +10,7 @@ This repository contains the verified data layer, the mobile-first application s
 - `docs/START_CODEX_PROMPT.md` — first prompt to paste into Codex
 - `data/7eleven_staff_training_master_dataset_v2_2026-08-09.json` — unchanged uploaded baseline
 - `index.html` and `assets/app.css` — mobile-first application shell
+- `START_7ELEVEN_TRAINING.bat` — Windows one-click local launcher
 - `src/data/` — validation, normalization, joins, selectors, and counter composition
 - `src/audio/` — browser-native Japanese TTS
 - `src/quiz/` — QZ005/QZ006 question generation and session state
@@ -34,6 +35,10 @@ The dataset copy in this starter pack was copied byte-for-byte from the uploaded
 ## Run locally in VS Code
 
 The JSON dataset is loaded with `fetch`, so do not open `index.html` directly with a `file://` URL.
+
+### Windows one-click launcher
+
+Double-click START_7ELEVEN_TRAINING.bat to launch the training app.
 
 ### VS Code Live Server
 

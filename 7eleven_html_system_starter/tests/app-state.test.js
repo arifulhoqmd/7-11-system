@@ -33,3 +33,23 @@ test("application state rejects unknown routes and statuses", () => {
     /Unknown application status/,
   );
 });
+
+test("application state supports the Continuous Playing route", () => {
+  const state = createAppState();
+  assert.doesNotThrow(() => state.navigate("continuous-playing"));
+  assert.equal(state.getState().route, "continuous-playing");
+  assert.equal(state.getState().continuousSession, null);
+});
+
+test("application state supports the Special Number reference route", () => {
+  const state = createAppState();
+  assert.doesNotThrow(() => state.navigate("special-number"));
+  assert.equal(state.getState().route, "special-number");
+});
+
+test("application state supports the Continuous Reading route", () => {
+  const state = createAppState();
+  assert.doesNotThrow(() => state.navigate("continuous-reading"));
+  assert.equal(state.getState().route, "continuous-reading");
+  assert.equal(state.getState().continuousReadingSession, null);
+});
